@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>realm</title>
+</head>
+
+<body>
+    <div id="app" style="width: 100vw; height: 100vh;"></div>
+    <!-- <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script> -->
+    <script src="https://gw.alipayobjects.com/os/antv/pkg/_antv.g6-3.3.1/dist/g6.min.js"></script>
+    <!-- <script type="text/babel">
+        console.log(G6.Global.version);
+        const element = <h1>realm</h1>;
+        ReactDOM.render(
+            element,
+            document.getElementById('app')
+        );
+    </script> -->
+    <script>
+        let set = new Set();
+        let global = [
+            "eval",
+            "isFinite",
+            "isNaN",
+            "parseFloat",
+            "parseInt",
+            "decodeURI",
+            "decodeURIComponent",
+            "encodeURI",
+            "encodeURIComponent",
+            "Array",
+            "Date",
+            "RegExp",
+            "Promise",
+            "Proxy",
+            "Map",
+            "WeakMap",
+            "Set",
+            "WeakSet",
+            "Function",
+            "Boolean",
+            "String",
+            "Number",
+            "Symbol",
+            "Object",
+            "Error",
+            "EvalError",
+            "RangeError",
+            "ReferenceError",
+            "SyntaxError",
+            "TypeError",
+            "URIError",
+            "ArrayBuffer",
+            "SharedArrayBuffer",
+            "DataView",
+            "Float32Array",
+            "Float64Array",
+            "Int8Array",
+            "Int16Array",
+            "Int32Array",
+            "Uint8Array",
+            "Uint16Array",
+            "Uint32Array",
+            "Uint8ClampedArray",
+            "Atomics",
+            "JSON",
+            "Math",
+            "Reflect"
+        ];
+        let objects = [];
+        for (const p of global) {
+            objects.push({
+                path: [p],
+                object: this[p]
+            })
+        }
+        objects.forEach(o => set.add(o.object));
+
+        for (let i = 0; i < objects.length; i++) {
+            let o = objects[i]
+            if (!o.object) {
+                continue;
+            }
+            for (var p of Object.getOwnPropertyNames(o.object)) {
+                var d = Object.getOwnPropertyDescriptor(o.object, p)
+                if ((d.value !== null && typeof d.value === "object") || (typeof d.value === "function"))
+                    if (!set.has(d.value))
+                        set.add(d.value), objects.push({
+                            path: o.path.concat([p]),
+                            object: d.value
+                        });
+                if (d.get)
+                    if (!set.has(d.get))
+                        set.add(d.get), objects.push({
+                            path: o.path.concat([p]),
+                            object: d.get
+                        });
+                if (d.set)
+                    if (!set.has(d.set))
+                        set.add(d.set), objects.push({
+                            path: o.path.concat([p]),
+                            object: d.set
+                        });
+            }
+        }
+
+        let initData = {
+            id: 'Global',
+            children: []
+        }
+
+        let hash = new Map();
+
+        function format() {
+
+        }
+
+        for (const obj of objects) {
+            if (obj.path.length === 1) {
+                initData.children.push({
+                    id: obj.path.join('.'),
+                    children: []
+                });
+            } else if (obj.path.length === 2) {
+                let index = global.findIndex((x) => x === obj.path[0]);
+                initData.children[index].children.push({
+                    id: obj.path[obj.path.length - 1],
+                    children: []
+                });
+            } else if (obj.path.length === 3) {
+                let index0 = global.findIndex((x) => x === obj.path[0]);
+                let index1 = initData.children[index0].children.findIndex((x) => x.id === obj.path[1]);
+                initData.children[index0].children[index1].children.push({
+                    id: obj.path[obj.path.length - 1],
+                    children: []
+                });
+            }
+        }
+
+        console.log(initData)
+
+        const width = document.getElementById('app').scrollWidth;
+        const height = document.getElementById('app').scrollHeight || 500;
+        const graph = new G6.TreeGraph({
+            container: 'app',
+            width,
+            height,
+            modes: {
+                default: [
+                    {
+                        type: 'collapse-expand',
+                        onChange: function onChange(item, collapsed) {
+                            const data = item.get('model').data;
+                            data.collapsed = collapsed;
+                            return true;
+                        },
+                    },
+                    'drag-canvas',
+                    'zoom-canvas',
+                ],
+            },
+            defaultNode: {
+                size: 26,
+                anchorPoints: [
+                    [0, 0.5],
+                    [1, 0.5],
+                ],
+                style: {
+                    fill: '#C6E5FF',
+                    stroke: '#5B8FF9',
+                },
+            },
+            defaultEdge: {
+                type: 'cubic-horizontal',
+                style: {
+                    stroke: '#A3B1BF',
+                },
+            },
+            layout: {
+                type: 'mindmap',
+                direction: 'H',
+                getHeight: () => {
+                    return 16;
+                },
+                getWidth: () => {
+                    return 16;
+                },
+                getVGap: () => {
+                    return 10;
+                },
+                getHGap: () => {
+                    return 50;
+                },
+            },
+        });
+
+        let centerX = 0;
+        graph.node(function (node) {
+            if (node.id === 'global') {
+                centerX = node.x;
+            }
+
+            return {
+                label: node.id,
+                labelCfg: {
+                    position:
+                        node.children && node.children.length > 0
+                            ? 'left'
+                            : node.x > centerX
+                                ? 'right'
+                                : 'left',
+                    offset: 5,
+                },
+            };
+        });
+
+        graph.data(initData);
+        graph.render();
+        graph.fitView();
+    </script>
+</body>
+
+</html>
