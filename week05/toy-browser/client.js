@@ -188,14 +188,10 @@ class TrunkedBodyParser {
                 this.current = this.READING_TRUNK;
             }
         } else if (this.current === this.READING_TRUNK) {
-            if (char === '\r') {
-                this.current = this.WAITING_LENGTH_LINE_END
-            } else {
-                this.content.push(char);
-                this.length--;
-                if (this.length === 0) {
-                    this.current = this.WAITING_NEW_LINE;
-                }
+            this.content.push(char);
+            this.length--;
+            if (this.length === 0) {
+                this.current = this.WAITING_NEW_LINE;
             }
         } else if (this.current === this.WAITING_NEW_LINE) {
             if (char === '\r') {
