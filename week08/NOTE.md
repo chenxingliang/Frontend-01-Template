@@ -1,1 +1,68 @@
 # 每周总结可以写在这里
+
+# CSS
+
+- CSS
+   - At-rules
+      - @charset
+      - @import
+      - @media
+      - @page
+      - @namespace
+      - @supports
+      - @document
+      - @keyframes
+      - @viewport
+      - @counter-style
+      - @font-feature-values
+   - rule
+      - Selector
+         - #id
+         - .className
+         - tag
+         - *
+         - selecter > selecter
+         - selecter selecter
+         - selecter,selecter
+         - element+element
+         - [attribute]
+         - [attribute=value]
+         - [attribute~=value]
+         - [attribute|=value]
+         - :link
+         - :visited
+         - :active
+         - :hover
+         - :focus
+         - :first-letter
+         - :first-line
+         - :first-child
+         - :before
+         - :after
+         - :lang(language)
+         - selecter~selecter
+         - [attribute^=value]
+         - [attribute$=value]
+         - [attribute*=value]
+         - :first-of-type
+         - :last-of-type
+         - :only-of-type
+         - :only-child
+         - :nth-child(n)
+         - :nth-last-child(n)
+         - :nth-of-type(n)
+         - :nth-last-of-type(n)
+         - :last-child
+         - :root
+         - :empty
+         - :target
+         - :enabled
+         - :disabled
+         - :checked
+         - :not(selector)
+         - ::selection
+      - Declaraion
+         - Key
+            - property
+            - variable
+         - Value
