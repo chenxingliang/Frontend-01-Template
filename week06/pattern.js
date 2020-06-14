@@ -35,5 +35,5 @@ function pattern(pat, str) {
     return false;
 }
 
-let res = pattern('abc', 'abcabcabdabc');
+let res = pattern('abcabd', 'abcabcabdabc');
 console.log(res);
